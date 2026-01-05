@@ -26,7 +26,7 @@ class ExtractionRequest(BaseModel):
     text_content: str = Field(..., description="The raw text to extract data from.")
     target_schema: Dict[str, Any] = Field(..., description="A JSON object representing the target schema with example values.")
 
-@app.post("/extract", response_model=Dict[str, Any])
+@app.post("/api/extract", response_model=Dict[str, Any])
 async def extract_data(request: ExtractionRequest):
     """
     Extracts structured data from raw text based on a provided JSON schema.
@@ -41,7 +41,7 @@ async def extract_data(request: ExtractionRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred during extraction: {str(e)}")
 
-@app.post("/prompt", response_model=Dict[str, str])
+@app.post("/api/prompt", response_model=Dict[str, str])
 async def get_prompt(request: ExtractionRequest):
     """
     Returns the prompt that would be sent to the LLM.
@@ -49,7 +49,7 @@ async def get_prompt(request: ExtractionRequest):
     prompt = gemini_service.build_prompt(request.text_content, request.target_schema)
     return {"prompt": prompt}
 
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     return {
         "status": "healthy", 

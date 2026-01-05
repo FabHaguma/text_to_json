@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Text-to-JSON</title>
+    <title>Text-2-JSON</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -96,7 +96,7 @@
 
         async function checkHealth() {
             try {
-                const res = await fetch('/health');
+                const res = await fetch('/api/health');
                 const data = await res.json();
                 const badge = document.getElementById('health-badge');
                 if (data.status === 'healthy' && data.api_key_configured) {
@@ -138,7 +138,7 @@
             output.className = 'text-slate-400 font-mono text-sm italic';
 
             try {
-                const response = await fetch('/extract', {
+                const response = await fetch('/api/extract', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -176,7 +176,7 @@
             }
 
             try {
-                const response = await fetch('/prompt', {
+                const response = await fetch('/api/prompt', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
