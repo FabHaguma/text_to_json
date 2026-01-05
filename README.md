@@ -67,7 +67,7 @@ You will see the web interface where you can paste text, define a schema, and se
 ### Using the API
 You can interact with the API directly using tools like `curl` or Postman.
 
-**Endpoint:** `POST /extract`
+**Endpoint:** `POST /api/extract`
 
 **Request Body:**
 ```json
@@ -103,10 +103,92 @@ text_to_json/
 ├── main.py                 # FastAPI application entry point
 ├── requirements.txt        # Python dependencies
 ├── .env                    # Environment variables (not committed)
+├── Dockerfile              # Docker image configuration
+├── docker-compose.yml      # Multi-container orchestration
+├── nginx/
+│   └── nginx.conf          # Nginx reverse proxy configuration
 ├── services/
 │   └── gemini_service.py   # Gemini API integration logic
 └── static/
     └── index.html          # Frontend application
+```
+
+## Docker Deployment
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Caddy or similar reverse proxy (optional for production)
+- Gemini API key available
+
+### Setup
+
+1. **Create `.env` file with your API key:**
+   ```bash
+   echo "GEMINI_API_KEY=your_api_key_here" > .env
+   ```
+
+2. **Build and start containers:**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access the application:**
+   - Frontend: `http://localhost:8080` (or your configured domain)
+   - API: `http://localhost:8000/api`
+
+### Architecture
+
+```
+Caddy (Production - HTTPS)
+  ↓
+Nginx (Reverse Proxy)
+  ├─→ Static files (/index.html, CSS, JS)
+  └─→ FastAPI Backend (/api/*, port 8000)
+```
+
+### Useful Commands
+
+```bash
+# View logs
+docker-compose logs -f
+
+# Check container status
+docker-compose ps
+
+# Stop services
+docker-compose down
+
+# Rebuild containers
+docker-compose up -d --build
+```
+
+## API Reference
+
+### Health Check
+```bash
+GET /api/health
+```
+
+### Extract Data
+```bash
+POST /api/extract
+Content-Type: application/json
+
+{
+  "text_content": "Your text here",
+  "target_schema": { /* JSON schema */ }
+}
+```
+
+### Get Prompt
+```bash
+POST /api/prompt
+Content-Type: application/json
+
+{
+  "text_content": "Your text here",
+  "target_schema": { /* JSON schema */ }
+}
 ```
 
 ## Contributing
