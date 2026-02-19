@@ -1,6 +1,5 @@
 import json
 from google import genai
-from google.genai import types
 from typing import Any, Dict
 from config import settings
 
@@ -10,7 +9,7 @@ class GeminiService:
         self.client = None
         if self.api_key:
             self.client = genai.Client(api_key=self.api_key)
-        self.model_name = "gemini-2.5-flash"
+        self.model_name = "gemini-3-flash-preview"
 
     async def extract_structured_data(self, text_content: str, target_schema: Dict[str, Any]) -> Dict[str, Any]:
         if not self.api_key:
@@ -21,13 +20,13 @@ class GeminiService:
         
         prompt = self.build_prompt(text_content, target_schema)
         
-        response = self.client.models.generate_content(
+        response = await self.client.aio.models.generate_content(
             model=self.model_name,
             contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_json_schema=target_schema
-            )
+            config={
+                "response_mime_type": "application/json",
+                # "response_json_schema": target_schema,
+            }
         )
 
         return response.parsed if response.parsed else json.loads(response.text)
